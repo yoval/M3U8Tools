@@ -7,13 +7,14 @@ Created on Tue May 25 19:12:25 2021
 from mima import GetPass
 import requests,re,time,os
 from bs4 import BeautifulSoup
-from urllib.parse import  unquote
+from urllib.parse import  unquote,urlparse
 
-PlayUrl = 'http://www.dianyingim.com/show-190413/'
+
+PlayUrl = 'http://www.q49.net/y/99776/'
 
 
 # 1.下载.m3u8文件 2.推送至m3u8.exe
-TYPE = 2
+TYPE = 1
 
 #下载.m3u8文件
 def DownM3U8(M3U8_URL,VideoName,PlayName):
@@ -45,6 +46,25 @@ def Push2m3u8(VideoName,M3U8_URL):
         }
     requests.post(PostUrl,PostData)
     time.sleep(1)
+    
+#获取m3u8新链接
+def GetNewUrl(OldUrl):
+#    print(OldUrl)
+    WebUrl = urlparse(OldUrl).scheme +'://'+ urlparse(OldUrl).netloc
+    M3U8_Res = requests.get(OldUrl)
+    M3U8_text = M3U8_Res.text
+    M3U8_New = M3U8_text.split('\n')
+    for i in M3U8_New:
+        if 'm3u8' in i:
+            New_M3U8_URL = WebUrl + i
+            break
+        else:
+            New_M3U8_URL=''
+    if New_M3U8_URL=='':
+        print('.m3u8网址:%s连接失败！尝试瞎猜新链接'%OldUrl)
+        New_M3U8_URL = OldUrl.replace('index.m3u8','1000kb/hls/index.m3u8')
+        
+    return New_M3U8_URL
 
 if 'q49.net' in PlayUrl:
     PlayRes = requests.get(PlayUrl)
@@ -78,6 +98,7 @@ if 'dianyingim.com' in PlayUrl:
         res = requests.get(url)
         M3U8_URL = re.findall('"url":"(.*?)",',res.text)[0]
         M3U8_URL = unquote(M3U8_URL)
+        M3U8_URL = GetNewUrl(M3U8_URL)
         VideoName = re.findall('<span class="btn-pc page-title">(.*?)</span>',res.text)[0]
         if TYPE==1:
             DownM3U8(M3U8_URL,VideoName,PlayName)
@@ -85,20 +106,26 @@ if 'dianyingim.com' in PlayUrl:
             Push2m3u8(VideoName,M3U8_URL)
         
 if 'wxtv.net' in PlayUrl:
+    print('此页面链接为：播放链接。推荐BD影厅')
     PlayRes = requests.get(PlayUrl)
     PlayRes.encoding='utf-8'
     PlaySoup = BeautifulSoup(PlayRes.text,'lxml')
-    PlayName = PlaySoup.h1.get_text()
+    PlayName = PlaySoup.h3.get_text()
     print('当前抓取的是：%s'%PlayName)
-    PlaylistlinkSoup = PlaySoup.find_all('ul',class_='content_playlist list_scroll clearfix')[0]
-    Playlistlink = PlaylistlinkSoup.find_all('a', href=True)
-    Playlistlink = ['https://www.wxtv.net'+Pagelink['href'] for Pagelink in Playlistlink]
-    print('共检索到%s集'%len(Playlistlink))
-    for url in Playlistlink:
+    Url = PlayUrl.rsplit('-',1)[0]
+    Pages = re.findall('第(\d+)集',PlayRes.text)
+    Pages = list(set(Pages))
+    Pages = [int(Page) for Page in Pages]
+    Pages = max(Pages)
+    print('共检索到%s集'%Pages)    
+    for Page in range(Pages):
+        P = Page+1
+        url = Url + '-%s.html'%P
         res = requests.get(url)
         res.encoding='utf-8'
         M3U8_URL = re.findall(r'https:\\/\\/[vod2.buycar5.cn丨4.mhbobo.com].*?index.m3u8',res.text)[0]
         M3U8_URL = M3U8_URL.replace('\\','')
+        M3U8_URL = GetNewUrl(M3U8_URL)
         VideoName = re.findall('data-part="(.*?)"></span>',res.text)[0]
         if TYPE==1:
             DownM3U8(M3U8_URL,VideoName,PlayName)
@@ -118,13 +145,15 @@ if 'pilipali.cc' in PlayUrl:
         res = requests.get(url)
         M3U8_URL = re.findall('"url":"(.*?)"',res.text)[1]
         M3U8_URL = GetPass(M3U8_URL)
+        M3U8_URL = GetNewUrl(M3U8_URL)
         VideoName = re.findall('</h3><p>(.*?)</p></div><div class="fjcon"><div class="fjtop clearfix">',res.text)[0]
         if TYPE==1:
             DownM3U8(M3U8_URL,VideoName,PlayName)
         else:
             Push2m3u8(VideoName,M3U8_URL)
         
-if 'pianku.li' in PlayUrl:      
+if 'pianku.li' in PlayUrl:
+    print('此页面链接为：播放链接。推荐百度云播放链接')
     Url = PlayUrl.split('_')[0]
     PlayRes = requests.get(PlayUrl)
     Pages = re.findall('第(.*?)集',PlayRes.text)
@@ -139,6 +168,7 @@ if 'pianku.li' in PlayUrl:
         res = requests.get(url)
         M3U8_URL = re.findall("geturl(.*?);",res.text)[0]
         M3U8_URL = M3U8_URL.split('\'')[1]
+        M3U8_URL = GetNewUrl(M3U8_URL)
         VideoName = re.findall('class="on">(.*?)</a></li>',res.text)[0]
         if TYPE==1:
             DownM3U8(M3U8_URL,VideoName,PlayName)
@@ -157,12 +187,14 @@ if 'yunbtv.com' in PlayUrl:
         res = requests.get(url)
         M3U8_URL = re.findall('"url":"(.*?)",',res.text)[1]
         M3U8_URL = M3U8_URL.replace('\\','')
+        M3U8_URL = GetNewUrl(M3U8_URL)
         VideoName = re.findall('<title>(.*?)</title>',res.text)[0]
         VideoName = VideoName.split('_')[1]
         if TYPE==1:
             DownM3U8(M3U8_URL,VideoName,PlayName)
         else:
             Push2m3u8(VideoName,M3U8_URL)
+
 
 if TYPE==1:
     WirteReadMe(PlayName,PlayUrl)

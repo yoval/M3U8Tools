@@ -71,4 +71,5 @@ def GetPass(urlstr):
     urlstr = urlstr.replace('JTY1', 'e')
     urlstr = urlstr.replace('JTRC', 'K')
     urlstr = urlstr.replace('JTMz', '3')
+    urlstr = urlstr.replace('JTQ5', 'I')
     return urlstr
