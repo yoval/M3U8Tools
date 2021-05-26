@@ -9,7 +9,7 @@ import requests,re,time,os
 from bs4 import BeautifulSoup
 from urllib.parse import  unquote
 
-PlayUrl = 'http://pilipali.cc/vod/detail/id/118762.html'
+PlayUrl = 'http://www.dianyingim.com/show-190413/'
 
 
 # 1.下载.m3u8文件 2.推送至m3u8.exe
@@ -32,7 +32,7 @@ def DownM3U8(M3U8_URL,VideoName,PlayName):
         
 #生成ReadMe.md文件
 def WirteReadMe(PlayName,PlayUrl):
-    with open(PlayName+'\\'+'ReadMe.md','w') as f:
+    with open(PlayName+'\\'+'ReadMe.md','w',encoding='utf-8') as f:
         f.write('来源于：'+PlayUrl)
         
 #推送至m3u8.exe
