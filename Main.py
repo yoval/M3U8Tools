@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import  unquote,urlparse
 
 
-PlayUrl = 'http://www.q49.net/y/99776/'
+PlayUrl = 'http://pilipali.cc/vod/play/id/116184/sid/1/nid/1.html'
 
 
 # 1.下载.m3u8文件 2.推送至m3u8.exe
@@ -66,6 +66,14 @@ def GetNewUrl(OldUrl):
         
     return New_M3U8_URL
 
+#获取总集数
+def GetPages(PlayRes):
+    Pages = re.findall('第(\d+)集',PlayRes.text)
+    Pages = list(set(Pages))
+    Pages = [int(Page) for Page in Pages]
+    Pages = max(Pages)
+    return Pages
+
 if 'q49.net' in PlayUrl:
     PlayRes = requests.get(PlayUrl)
     PlaySoup = BeautifulSoup(PlayRes.text,'lxml')
@@ -85,7 +93,7 @@ if 'q49.net' in PlayUrl:
         else:
             Push2m3u8(VideoName,M3U8_URL)
         
-if 'dianyingim.com' in PlayUrl:
+elif 'dianyingim.com' in PlayUrl:
     PlayRes = requests.get(PlayUrl)
     PlaySoup = BeautifulSoup(PlayRes.text,'lxml')
     PlayName = PlaySoup.h1.get_text()
@@ -105,7 +113,7 @@ if 'dianyingim.com' in PlayUrl:
         else:
             Push2m3u8(VideoName,M3U8_URL)
         
-if 'wxtv.net' in PlayUrl:
+elif 'wxtv.net' in PlayUrl:
     print('此页面链接为：播放链接。推荐BD影厅')
     PlayRes = requests.get(PlayUrl)
     PlayRes.encoding='utf-8'
@@ -113,10 +121,7 @@ if 'wxtv.net' in PlayUrl:
     PlayName = PlaySoup.h3.get_text()
     print('当前抓取的是：%s'%PlayName)
     Url = PlayUrl.rsplit('-',1)[0]
-    Pages = re.findall('第(\d+)集',PlayRes.text)
-    Pages = list(set(Pages))
-    Pages = [int(Page) for Page in Pages]
-    Pages = max(Pages)
+    Pages = GetPages(PlayRes)
     print('共检索到%s集'%Pages)    
     for Page in range(Pages):
         P = Page+1
@@ -132,7 +137,7 @@ if 'wxtv.net' in PlayUrl:
         else:
             Push2m3u8(VideoName,M3U8_URL)
         
-if 'pilipali.cc' in PlayUrl:
+elif 'pilipali.cc' in PlayUrl:
     PlayRes = requests.get(PlayUrl)
     PlaySoup = BeautifulSoup(PlayRes.text,'lxml')
     PlayName = PlaySoup.find_all('h1',class_='clearfix')[0]
@@ -152,15 +157,11 @@ if 'pilipali.cc' in PlayUrl:
         else:
             Push2m3u8(VideoName,M3U8_URL)
         
-if 'pianku.li' in PlayUrl:
+elif 'pianku.li' in PlayUrl:
     print('此页面链接为：播放链接。推荐百度云播放链接')
     Url = PlayUrl.split('_')[0]
     PlayRes = requests.get(PlayUrl)
-    Pages = re.findall('第(.*?)集',PlayRes.text)
-    PlayName = re.findall('<title>(.*?)_第',PlayRes.text)[0]
-    Pages = list(set(Pages))
-    Pages = [int(Page) for Page in Pages]
-    Pages = max(Pages)
+    Pages = GetPages(PlayRes)
     print('共检索到%s集'%Pages)
     for Page in range(Pages):
         P = Page+1
@@ -175,7 +176,7 @@ if 'pianku.li' in PlayUrl:
         else:
             Push2m3u8(VideoName,M3U8_URL)
         
-if 'yunbtv.com' in PlayUrl:
+elif 'yunbtv.com' in PlayUrl:
     PlayRes = requests.get(PlayUrl)
     PlaySoup = BeautifulSoup(PlayRes.text,'lxml')
     PlayName = PlaySoup.h2.get_text()
@@ -194,6 +195,8 @@ if 'yunbtv.com' in PlayUrl:
             DownM3U8(M3U8_URL,VideoName,PlayName)
         else:
             Push2m3u8(VideoName,M3U8_URL)
+
+
 
 
 if TYPE==1:
