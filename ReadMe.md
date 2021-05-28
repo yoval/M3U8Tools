@@ -1,43 +1,64 @@
-下载`.m3u8`文件，用于在线播放引用。
+获取各个网站的`.m3u8`文件，支持：
 
-如OneManager：https://share.bizha.ga/TourPub/Media/
+✔下载`.m3u8`文件 。
 
+- 可在OneManager在线播放，如 https://share.bizha.ga/TourPub/Media/ （我的目的）
+- 可用PotPlayer文件播放
+
+✔下载视频文件 
+
+- 下载视频至本地
+
+✔保存`.m3u8`链接 
+
+- 可在在线播放器播放，如 https://play.bizha.top/
+- 可用PotPlayer播放链接
+
+### 第三方M3U8播放示例：
+
+- [ ] OneManager：例 
+
+- [ ] 在线播放：例 https://play.bizha.top/
+- [ ] 本地播放：PotPlayer
+
+### 当前支持的网站
+
+- [ ] [Q49影视](http://www.q49.net/)
+- [ ] [电影先生](http://www.dianyingim.com/)
+- [ ] [无线影视](https://m3u8play.com/)
+- [ ] [批里啪里](http://pilipali.cc/)
+- [ ] [片库](https://www.pianku.li/)
+- [ ] [云播TV](https://www.yunbtv.com)
+- [ ] [AGE动漫](https://agefans.org/)
+
+### 使用方法
+
+![代码](https://i.loli.net/2021/05/28/TjDd1hNv3V2EP4t.png)
+
+`PlayPageUrl` 为**播放界面**，需确认可播放。
+
+![播放](https://i.loli.net/2021/05/28/3ptdsuhWbyVFNUB.png)
 
 <br/>
 
-### 第三方M3U8播放：
+`TYPE`为`1`时，下载`.m3u8`文件。用于OneManager等引用。
 
-- [ ] 在线播放：https://m3u8play.com
+![down](https://i.loli.net/2021/05/28/K7fMTvcgDL1h5YU.png)
 
-- [ ] 本地播放：PotPlayer
+`TYPE` 为`2`时，调用[下载工具](https://xyyx.lanzoui.com/iSQf1pbqr8h)下载视频。
 
-### 可外链M3U8的网站
+![down](https://i.loli.net/2021/05/28/VKoCMpeLkYqfxHz.png)
 
-- [ ] [Q49影视](http://www.q49.net/)
+<br/>
 
-- 影视主页链接
+![下载](https://i.loli.net/2021/05/28/2giGvQ3OJceXfRb.png)
 
-- [ ] [电影先生](http://www.dianyingim.com/)
+<br/>
 
-- 影视主页链接
+<br/>
 
-- [ ] [无线影视](https://m3u8play.com/)
+`TYPE `为`3`时，下载链接。可在在线播放器播放 https://play.bizha.top/ 
 
-- **播放界面**链接，似乎BD影音最佳。
+![链接](https://i.loli.net/2021/05/28/xNgAq81lEdPMwmT.png)
 
-- [ ] [批里啪里](http://pilipali.cc/)
-
-- 影视主页链接
-
-- [ ] [片库](https://www.pianku.li/)
-
-- **播放界面**链接，似乎百度云最佳。
-
-- [ ] [云播TV](https://www.yunbtv.com)
-
-- 影视主页链接
-
-
-代码中的`.m3u8`文件下载工具是 https://www.52pojie.cn/thread-1374045-1-1.html ，
-
-另外`.m3u8`文件工具 https://www.52pojie.cn/thread-1374045-1-1.html
+![播放](https://i.loli.net/2021/05/28/X9Hpua8QgtEwxTm.png)
