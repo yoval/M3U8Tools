@@ -1,4 +1,4 @@
-获取各个网站的`.m3u8`文件，支持：
+主程序`m3u8.py`，获取各个网站的`.m3u8`文件，支持：
 
 ✔下载`.m3u8`文件 。
 
@@ -30,6 +30,8 @@
 - [ ] [片库](https://www.pianku.li/)
 - [ ] [云播TV](https://www.yunbtv.com)
 - [ ] [AGE动漫](https://agefans.org/)
+- [ ] [琪琪电影网](http://www.yzbang.cc/)
+- [ ] [策驰影院](http://www.cechiyy5.com/)
 
 ### 使用方法
 

@@ -10,9 +10,9 @@ from urllib.parse import  unquote,urlparse
 from mima import GetPass
 
 #播放链接
-PlayPageUrl = 'http://www.dianyingim.com/paly-46522-1-1/'
+PlayPageUrl = 'http://www.yzbang.cc/swr/125969-1-1.html'
 # 1.下载.m3u8文件 2.推送至m3u8.exe 3.保存链接
-TYPE = 3
+TYPE = 1
 
 #下载.m3u8文件
 def DownM3U8(M3U8_URL,VideoName,PlayName):
@@ -65,11 +65,14 @@ def WirteReadMe(PlayName,PlayUrl):
 
 #获取总集数
 def GetPages(PlayRes):
-    Pages = re.findall('第(\d+)集',PlayRes.text)
-    Pages = list(set(Pages))
-    Pages = [int(Page) for Page in Pages]
-    Pages = max(Pages)
-    print('共检测到%s集'%Pages)
+    try:
+        Pages = re.findall('第(\d+)集',PlayRes.text)
+        Pages = list(set(Pages))
+        Pages = [int(Page) for Page in Pages]
+        Pages = max(Pages)
+        print('共检测到%s集'%Pages)
+    except:
+        Pages=1
     return Pages
 
 #获取播放页面链接列表
@@ -146,7 +149,7 @@ elif 'pilipali.cc' in PlayPageUrl:
         PlayRes = requests.get(PlayPageUrl)
         PlaySoup = BeautifulSoup(PlayRes.text,'lxml')
         Title = PlaySoup.title.get_text()
-        PlayName = Title.split(' ')[0]
+        PlayName = Title.split('-')[0]
         CurrentName = re.findall('-(.*?)在线播放',Title)[0]
         M3U8_URL = re.findall('"url":"(.*?)"',PlayRes.text)[1]
         M3U8_URL = GetPass(M3U8_URL)
@@ -182,12 +185,13 @@ elif 'yunbtv.com' in PlayPageUrl:
         Last(TYPE,M3U8_URL,CurrentName,PlayName)
 
 elif 'agefans.org' in PlayPageUrl:
-    print('仅获取有.m3u8文件的视频')
     BaseUrl = PlayPageUrl.split('#')[0]
     Res = requests.get(PlayPageUrl)
     Soup = BeautifulSoup(Res.text,'lxml')
     PlayName = Soup.title.get_text()
-    PlayName = PlayName.split(' ')[1]
+    PlayName = PlayName.split('-')[0]
+    PlayName = PlayName.replace(' ','')
+    print(PlayName)
     PlaylistlinkSoup = Soup.find_all('ul',class_='row list-unstyled my-gutters-2')[0]
     Playlistlink = PlaylistlinkSoup.find_all('a', href=True)
     Playlistlink = [BaseUrl+Pagelink['href'] for Pagelink in Playlistlink]
@@ -216,6 +220,35 @@ elif 'agefans.org' in PlayPageUrl:
                 M3U8_URL = GetNewUrl(VidoUrl)
             except:
                 print('获取新链接失败，用旧链接。')
-            Last(TYPE,M3U8_URL,CurrentName,PlayName)
-        
+            Last(TYPE,M3U8_URL,VidoName,PlayName)
+            break
 
+elif 'yzbang.cc' in PlayPageUrl:
+    print('支持播放源是-百度云.m3u8')
+    SplitCharacter = '-'
+    Playlistlink = GenPlayUrl(PlayPageUrl,SplitCharacter)
+    for PlayUrl in Playlistlink:
+        Res = requests.get(PlayUrl)
+        try:
+            M3U8_URL = re.findall('"url":"(.*?)","url_next',Res.text)[0]
+        except:
+            print('好像集数检测错了，到此为止……')
+            break
+        M3U8_URL = M3U8_URL.replace('\\','')
+        M3U8_URL = GetNewUrl(M3U8_URL)
+        CurrentName = re.findall("vod_part='(.*?)'",Res.text)[0]
+        PlayName = re.findall("vod_name = '(.*?)'",Res.text)[0]
+        Last(TYPE,M3U8_URL,CurrentName,PlayName)
+
+elif 'cechiyy5.com' in PlayPageUrl:
+    SplitCharacter = '-'
+    Playlistlink = GenPlayUrl(PlayPageUrl,SplitCharacter)
+    for PlayUrl in Playlistlink:
+        Res = requests.get(PlayUrl)
+        PlaySoup = BeautifulSoup(Res.text,'lxml')
+        Play_Name = PlaySoup.h2.get_text()
+        PlayName = Play_Name.split(' ')[1]
+        VidoName = Play_Name.split(' ')[2]
+        M3U8_URL = re.findall('"url":"(.*?)","url_next',Res.text)[0]
+        M3U8_URL = M3U8_URL.replace('\\','')
+        Last(TYPE,M3U8_URL,VidoName,PlayName)
