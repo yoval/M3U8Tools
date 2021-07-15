@@ -47,7 +47,7 @@
 
 ![down](https://i.loli.net/2021/05/28/K7fMTvcgDL1h5YU.png)
 
-`TYPE` 为`2`时，调用[下载工具](https://xyyx.lanzoui.com/iSQf1pbqr8h)下载视频。
+`TYPE` 为`2`时，调用[下载工具](https://share.bizha.top/down.php/ca2df40c715dba9d642fbc2e6388ea48.zip)下载视频 。
 
 ![down](https://i.loli.net/2021/05/28/VKoCMpeLkYqfxHz.png)
 
@@ -59,7 +59,7 @@
 
 <br/>
 
-`TYPE `为`3`时，下载链接。可在在线播放器播放 https://play.bizha.top/ 
+`TYPE `为`3`时，保存链接。可通过`SimpleGUI`下载（带GUI版本：https://github.com/nilaoda/N_m3u8DL-CLI/releases/tag/2.9.7 ）。
 
 ![链接](https://i.loli.net/2021/05/28/xNgAq81lEdPMwmT.png)
 

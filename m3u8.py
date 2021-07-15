@@ -12,8 +12,8 @@ from mima import GetPass
 #播放链接
 PlayPageUrl = 'http://www.yzbang.cc/swr/125969-1-1.html'
 # 1.下载.m3u8文件 2.推送至m3u8.exe 3.保存链接
-TYPE = 1
-
+TYPE = 3
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36'}
 #下载.m3u8文件
 def DownM3U8(M3U8_URL,VideoName,PlayName):
     folder = os.path.exists(PlayName)
@@ -21,11 +21,15 @@ def DownM3U8(M3U8_URL,VideoName,PlayName):
         os.makedirs(PlayName)
     time.sleep(1)
     print(VideoName)
-    try:
-        down_res = requests.get(M3U8_URL)
-    except:
-        time.sleep(10)
-        down_res = requests.get(M3U8_URL)
+    count=1
+    while True:
+        count+=1
+        print('第%s次尝试.m3u8下载文件。'%count)
+        try:
+            down_res = requests.get(M3U8_URL,headers=headers)
+            break
+        except:
+            time.sleep(30)
     with open(PlayName+'\\'+VideoName+'.m3u8',"wb") as f:
         f.write(down_res.content)
 
@@ -37,14 +41,22 @@ def Push2m3u8(VideoName,M3U8_URL):
         'data':VideoName+','+M3U8_URL,
         'type':'2'
         }
-    requests.post(PostUrl,PostData)
+    requests.post(PostUrl,PostData,headers=headers)
     time.sleep(1)
     
 #获取m3u8新链接
 def GetNewUrl(OldUrl):
 #    print(OldUrl)
     WebUrl = urlparse(OldUrl).scheme +'://'+ urlparse(OldUrl).netloc
-    M3U8_Res = requests.get(OldUrl)
+    count=1
+    while True:
+        count+=1
+        print('第%s次尝试获取新链接。'%count)
+        try:
+            M3U8_Res = requests.get(OldUrl,headers=headers,allow_redirects=True)
+            break
+        except:
+            time.sleep(10)
     M3U8_text = M3U8_Res.text
     M3U8_New = M3U8_text.split('\n')
     for i in M3U8_New:
@@ -84,7 +96,7 @@ def GenPlayUrl(PlayPageUrl,SplitCharacter):
         Suffixes = '.'+Suffixes[-1]
     else:
         Suffixes = ''
-    PlayRes = requests.get(PlayPageUrl)
+    PlayRes = requests.get(PlayPageUrl,headers=headers)
     Pages = GetPages(PlayRes)
     Playlinklist = [FrontUrl + SplitCharacter +str(Page+1)+ Suffixes for Page in range(Pages)]
     return Playlinklist
@@ -107,7 +119,7 @@ if 'q49.net' in PlayPageUrl:
     SplitCharacter = '-'
     Playlistlink = GenPlayUrl(PlayPageUrl,SplitCharacter)
     for PlayPageUrl in Playlistlink:
-        PlayRes = requests.get(PlayPageUrl)
+        PlayRes = requests.get(PlayPageUrl,headers=headers)
         PlaySoup = BeautifulSoup(PlayRes.text,'lxml')
         CurrentSoup = PlaySoup.find_all('div',class_='footer clearfix')[0]
         PlayName = CurrentSoup.select('a')[-1]['title']
@@ -120,7 +132,7 @@ elif 'dianyingim.com' in PlayPageUrl:
     SplitCharacter = '-'
     Playlistlink = GenPlayUrl(PlayPageUrl,SplitCharacter)
     for PlayPageUrl in Playlistlink:
-        PlayRes = requests.get(PlayPageUrl)
+        PlayRes = requests.get(PlayPageUrl,headers=headers)
         PlaySoup = BeautifulSoup(PlayRes.text,'lxml')
         PlayName = PlaySoup.h1.get_text()
         CurrentName = re.findall('<span class="btn-pc page-title">(.*?)</span>',PlayRes.text)[0]
@@ -133,7 +145,7 @@ elif 'wxtv.net' in PlayPageUrl:
     SplitCharacter = '-'
     Playlistlink = GenPlayUrl(PlayPageUrl,SplitCharacter)
     for PlayPageUrl in Playlistlink:
-        PlayRes = requests.get(PlayPageUrl)
+        PlayRes = requests.get(PlayPageUrl,headers=headers)
         PlaySoup = BeautifulSoup(PlayRes.text,'lxml')
         PlayName = PlaySoup.h3.get_text()
         CurrentName = re.findall('data-part="(.*?)"></span>',PlayRes.text)[0]
@@ -146,7 +158,7 @@ elif 'pilipali.cc' in PlayPageUrl:
     SplitCharacter = '/'
     Playlistlink = GenPlayUrl(PlayPageUrl,SplitCharacter)
     for PlayPageUrl in Playlistlink:
-        PlayRes = requests.get(PlayPageUrl)
+        PlayRes = requests.get(PlayPageUrl,headers=headers)
         PlaySoup = BeautifulSoup(PlayRes.text,'lxml')
         Title = PlaySoup.title.get_text()
         PlayName = Title.split('-')[0]
@@ -160,7 +172,7 @@ elif 'pianku.li' in PlayPageUrl:
     SplitCharacter = '_'
     Playlistlink = GenPlayUrl(PlayPageUrl,SplitCharacter)
     for PlayPageUrl in Playlistlink:
-        PlayRes = requests.get(PlayPageUrl)
+        PlayRes = requests.get(PlayPageUrl,headers=headers)
         PlaySoup = BeautifulSoup(PlayRes.text,'lxml')
         Title = PlaySoup.title.get_text()
         PlayName = Title.split('_')[0]
@@ -174,7 +186,7 @@ elif 'yunbtv.com' in PlayPageUrl:
     SplitCharacter = '-'
     Playlistlink = GenPlayUrl(PlayPageUrl,SplitCharacter)
     for PlayPageUrl in Playlistlink:
-        PlayRes = requests.get(PlayPageUrl)
+        PlayRes = requests.get(PlayPageUrl,headers=headers)
         PlaySoup = BeautifulSoup(PlayRes.text,'lxml')
         Title = PlaySoup.title.get_text()
         PlayName = Title.split('_')[0]
@@ -186,7 +198,7 @@ elif 'yunbtv.com' in PlayPageUrl:
 
 elif 'agefans.org' in PlayPageUrl:
     BaseUrl = PlayPageUrl.split('#')[0]
-    Res = requests.get(PlayPageUrl)
+    Res = requests.get(PlayPageUrl,headers=headers)
     Soup = BeautifulSoup(Res.text,'lxml')
     PlayName = Soup.title.get_text()
     PlayName = PlayName.split('-')[0]
@@ -200,7 +212,7 @@ elif 'agefans.org' in PlayPageUrl:
         Play_Url = PlayUrl.split('_')
         VidoId = re.findall('watch/(.*?)#',PlayUrl)[0]
         PlayJsonUrl = 'https://agefans.org/myapp/_get_ep_plays?ep=%s&anime_id=%s'%(Play_Url[-1],VidoId)
-        PlayJson = requests.get(PlayJsonUrl)
+        PlayJson = requests.get(PlayJsonUrl,headers=headers)
         PlayJson = PlayJson.json()
         VidoName = PlayJson['result'][0]['name']
         if len(VidoName)<3:
@@ -208,7 +220,7 @@ elif 'agefans.org' in PlayPageUrl:
         for Dic in PlayJson['result']:
             Id = Dic['id']
             VidoApi = 'https://agefans.org/myapp/_get_raw?id=%s'%Id
-            ApiRes = requests.get(VidoApi)
+            ApiRes = requests.get(VidoApi,headers=headers)
             VidoUrl = ApiRes.text
             if not 'http' in VidoUrl:
                 VidoUrl = 'https:' + VidoUrl
@@ -224,11 +236,12 @@ elif 'agefans.org' in PlayPageUrl:
             break
 
 elif 'yzbang.cc' in PlayPageUrl:
+    time.sleep(5)
     print('支持播放源是-百度云.m3u8')
     SplitCharacter = '-'
     Playlistlink = GenPlayUrl(PlayPageUrl,SplitCharacter)
     for PlayUrl in Playlistlink:
-        Res = requests.get(PlayUrl)
+        Res = requests.get(PlayUrl,headers=headers)
         try:
             M3U8_URL = re.findall('"url":"(.*?)","url_next',Res.text)[0]
         except:
@@ -244,7 +257,7 @@ elif 'cechiyy5.com' in PlayPageUrl:
     SplitCharacter = '-'
     Playlistlink = GenPlayUrl(PlayPageUrl,SplitCharacter)
     for PlayUrl in Playlistlink:
-        Res = requests.get(PlayUrl)
+        Res = requests.get(PlayUrl,headers=headers)
         PlaySoup = BeautifulSoup(Res.text,'lxml')
         Play_Name = PlaySoup.h2.get_text()
         PlayName = Play_Name.split(' ')[1]
