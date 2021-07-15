@@ -2,23 +2,22 @@
 
 ✔下载`.m3u8`文件 。
 
-- 可在OneManager在线播放，如 https://share.bizha.ga/TourPub/Media/ （我的目的）
-- 可用PotPlayer文件播放
+- 可在OneManager在线播放，如 https://share.bizha.ga/TourPub/Media/ （我的目的）。
+- 可用PotPlayer文件播放。
 
 ✔下载视频文件 
 
-- 下载视频至本地
+- 下载视频至本地。
 
 ✔保存`.m3u8`链接 
 
-- 可在在线播放器播放，如 https://play.bizha.top/
-- 可用PotPlayer播放链接
+- 可在在线播放器播放。
+- 可用PotPlayer播放链接。
+- 可通过`N_m3u8DL-CLI`下载。
 
 ### 第三方M3U8播放示例：
 
 - [ ] OneManager：例 
-
-- [ ] 在线播放：例 https://play.bizha.top/
 - [ ] 本地播放：PotPlayer
 
 ### 当前支持的网站
@@ -34,8 +33,6 @@
 - [ ] [策驰影院](http://www.cechiyy5.com/)
 
 ### 使用方法
-
-![代码](https://i.loli.net/2021/05/28/TjDd1hNv3V2EP4t.png)
 
 `PlayPageUrl` 为**播放界面**，需确认可播放。
 
